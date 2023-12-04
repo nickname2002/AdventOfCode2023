@@ -33,11 +33,10 @@ def main() -> None:
 
             # Handle case where there are matches
             for j in range(len(matching_numbers)):
-                print("Current card: ", i)
-                print("Amount: ", holding_cards)
-                holding_cards[j + 1] += 1
+                holding_cards[i + j + 1] += 1
 
             # Remove current card from holding cards
+            cards_in_output.append(i)
             holding_cards[i] -= 1
 
 
