@@ -48,7 +48,7 @@ def build_maps() -> None:
 
     map_index: int = 0
     for i, line in enumerate(file):
-        
+
         # Process empty line
         if line in ["\n", "\r\n"] and i == 1:
             continue
@@ -95,7 +95,6 @@ def find_lowest_location() -> int:
         destinations.append(source)
 
     return min(destinations)
-
 
 
 # Entry point of program
