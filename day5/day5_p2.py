@@ -30,6 +30,16 @@ def read_seeds(line: str) -> list:
     return seeds_and_ranges
 
 
+# TODO: Minimize seeds list, by combining overlapping ranges
+def minimize_seeds() -> None:
+    pass
+
+
+# TODO: Determine whether two tuples overlap
+def are_overlapping() -> bool:
+    pass
+
+
 # Process line representing map properties
 def process_map_line(line: str, map_index: int) -> None:
     global maps
@@ -89,21 +99,24 @@ def get_mapped_property(source: int, map_index: int):
 # TODO: too in-efficient
 # Find the lowest location of a specific seed
 def find_lowest_location() -> int:
-    destinations: list = []
+    current_lowest = float("inf")
     global maps
 
     for start_of_range, length_of_range in seeds:
+        print("Initial start we're currently checking: ", start_of_range)
         for seed in range(length_of_range):
             source = seed + start_of_range
             
             for i in range(len(maps)):
                 source = get_mapped_property(source, i) 
             
-            destinations.append(source)
+            if source < current_lowest:
+                current_lowest = source
 
-    return min(destinations)
+    return current_lowest
 
 
 # Entry point of program
 build_maps()
+minimize_seeds()
 print(find_lowest_location())
