@@ -26,7 +26,7 @@ def read_seeds(line: str) -> list:
 
 
 # Process line representing map properties
-def process_map_line(line: str, map_index: int):
+def process_map_line(line: str, map_index: int) -> None:
     global maps
     fragmented_line = line.split(" ")
 
@@ -35,13 +35,12 @@ def process_map_line(line: str, map_index: int):
     source_range_start = int(fragmented_line[1])
     range_length = int(fragmented_line[2])
 
-    # Track mappings in dictionary 
-    for i in range(range_length):
-        maps[map_index][destination_range_start + i] = source_range_start + i
+    # Track mappings in dictionary
+    maps[map_index][source_range_start] = (destination_range_start, range_length)
 
 
 # Preprocessing of maps for processing stage
-def build_maps():
+def build_maps() -> None:
     global seeds
 
     # Open in put file
@@ -49,7 +48,7 @@ def build_maps():
 
     map_index: int = 0
     for i, line in enumerate(file):
-
+        
         # Process empty line
         if line in ["\n", "\r\n"] and i == 1:
             continue
@@ -70,6 +69,35 @@ def build_maps():
     file.close()
 
 
+# Get destination map to specific source from a specific map
+def get_mapped_property(source: int, map_index: int):
+    global maps 
+
+    # Check whether the source is mapped to a destination
+    for src, (dst, rng) in maps[map_index].items():
+        if source >= src and source <= src + rng:
+            return dst + source - src
+
+    return source
+
+
+# Find the lowest location of a specific seed
+def find_lowest_location() -> int:
+    destinations: list = []
+    global maps
+
+    for seed in seeds:
+        source = seed 
+
+        for i, m in enumerate(maps):
+            source = get_mapped_property(source, i)
+
+        destinations.append(source)
+
+    return min(destinations)
+
+
+
 # Entry point of program
 build_maps()
-
+print(find_lowest_location())
