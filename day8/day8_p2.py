@@ -1,3 +1,4 @@
+import math
 
 # Traversing operations
 operations = []
@@ -67,23 +68,24 @@ def traverse_all_locations(operation: str) -> None:
 
 
 # Get number of steps to reach "ZZZ" from the starting location.
-def get_number_of_steps() -> int:
-    global locations, operations, current_locations
+def get_number_of_steps(loc: str) -> int:
+    global locations, operations
 
     steps = 0
+    current_loc = loc
 
-    while (not all_locations_end_with_z()):
+    while (not current_loc[-1] == "Z"):
         for operation in operations:
 
             # Case location found
-            if all_locations_end_with_z():
+            if current_loc[-1] == "Z":
                 break 
 
             # Continue traversion
             if operation == "L":
-                traverse_all_locations("L")
+                current_loc = locations[current_loc][0]
             else:
-                traverse_all_locations("R")
+                current_loc = locations[current_loc][1]
 
             # Update amount of steps taken
             steps += 1
@@ -94,9 +96,9 @@ def get_number_of_steps() -> int:
 # Program entry point
 read_locations()
 get_starting_locations()
-print(get_number_of_steps())
 
+# Get amount of steps of the starting loc to the first loc that ends with 'Z' 
+starting_steps_to_z = [get_number_of_steps(loc) for loc in current_locations]
 
-
-# TODO: Find cycles of all steps
-# TODO: Find when cycles first meet (least-common-multiple?)
+# Get the Least Common Multiple (LCM) of every amount in starting_steps_to_z
+print(math.lcm(*starting_steps_to_z))
