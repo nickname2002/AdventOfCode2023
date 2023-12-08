@@ -123,8 +123,8 @@ def order_hands(hands: list) -> list:
         "2": 2,
     }
 
-    # TODO: order hands by card value
-
+    # TODO: order hands by card values
+    
     return hands
 
 
