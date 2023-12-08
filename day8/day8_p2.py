@@ -95,3 +95,8 @@ def get_number_of_steps() -> int:
 read_locations()
 get_starting_locations()
 print(get_number_of_steps())
+
+
+
+# TODO: Find cycles of all steps
+# TODO: Find when cycles first meet (least-common-multiple?)
