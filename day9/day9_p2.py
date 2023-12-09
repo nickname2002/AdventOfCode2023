@@ -9,6 +9,7 @@ def read_histories() -> None:
     for line in input_file:
         list_with_chars = line.split(" ")
         list_with_numbers = [int(numb) for numb in list_with_chars] 
+        list_with_numbers.reverse()
         histories.append(list_with_numbers)
 
     input_file.close()
@@ -17,7 +18,6 @@ def read_histories() -> None:
 # Get list of differences between items in a list
 def get_diff_in_seq(seq: list) -> list:
     diff = []
-
     for i in range(len(seq) - 1):
         diff.append(seq[i + 1] - seq[i])
 
