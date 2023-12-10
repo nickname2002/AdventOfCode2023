@@ -96,7 +96,7 @@ def move_up(state: list, pos: tuple) -> (list, tuple):
 # Move down operation
 def move_down(state: list, pos: tuple) -> (list, tuple):
     # Base case: at the border of the grid.
-    if pos[0] >= len(state) - 1:
+    if pos[1] >= len(state) - 1:
         return (state, pos)
     
     current_tile = state[pos[1]][pos[0]]
