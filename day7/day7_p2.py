@@ -26,6 +26,16 @@ def read_input() -> None:
     input_file.close()
 
 
+def get_amount_of_jokers(hand: str) -> int:
+    jokers = 0
+    
+    for card in hand:
+        if card == "J":
+            jokers += 1
+
+    return jokers
+
+
 def is_full_house(hand: str) -> bool:
     card_count = {}
 
@@ -33,11 +43,17 @@ def is_full_house(hand: str) -> bool:
     for card in hand:
         card_count[card] = card_count.get(card, 0) + 1
 
-    # Check if one card occurs four times
-    if set(card_count.values()).__contains__(3) and \
-        set(card_count.values()).__contains__(2):
-        return True
-    
+    jokers = get_amount_of_jokers(hand)
+    card_count_list = list(card_count.values())
+    card_count_list.sort()
+
+    # Check if one card occur two times and one cards occurs three times
+    if card_count_list[-1] + jokers >= 3:
+        rem_jokers = card_count_list[-1] + jokers - 3
+        if len(card_count_list) >= 2 and card_count_list[-2] + rem_jokers >= 2 or \
+            rem_jokers >= 2:
+            return True
+            
     return False
 
 
@@ -48,8 +64,12 @@ def is_five_of_a_kind(hand: str) -> bool:
     for card in hand:
         card_count[card] = card_count.get(card, 0) + 1
 
-    # Check if one card occurs three times and no other card occurs twice
-    if set(card_count.values()).__contains__(5):
+    jokers = get_amount_of_jokers(hand)
+    card_count_list = list(card_count.values())
+    card_count_list.sort()
+
+    # Check if one card occurs five times
+    if jokers == 5 or card_count_list[-1] + jokers >= 5:
         return True 
     
     return False
@@ -62,10 +82,13 @@ def is_four_of_a_kind(hand: str) -> bool:
     for card in hand:
         card_count[card] = card_count.get(card, 0) + 1
 
+    jokers = get_amount_of_jokers(hand)
+    card_count_list = list(card_count.values())
+    card_count_list.sort()
+
     # Check if one card occurs four times
-    for count in card_count.values():
-        if count == 4:
-            return True
+    if jokers >= 4 or card_count_list[-1] + jokers >= 4:
+        return True
         
 
 def is_three_of_a_kind(hand: str) -> bool:
@@ -75,10 +98,13 @@ def is_three_of_a_kind(hand: str) -> bool:
     for card in hand:
         card_count[card] = card_count.get(card, 0) + 1
 
-    # Check if one card occurs three times and no other card occurs twice
-    for count in card_count.values():
-        if count == 3 and len(card_count) == 3:
-            return True
+    jokers = get_amount_of_jokers(hand)
+    card_count_list = list(card_count.values())
+    card_count_list.sort()
+
+    # Check if one card occur two times and one cards occurs three times
+    if card_count_list[-1] + jokers >= 3:
+        return True
 
 
 def is_two_pairs(hand: str) -> bool:
@@ -88,13 +114,15 @@ def is_two_pairs(hand: str) -> bool:
     for card in hand:
         card_count[card] = card_count.get(card, 0) + 1
 
-    # Check if two cards occur twice
-    pair_count = 0
-    for count in card_count.values():
-        if count == 2:
-            pair_count += 1
+    jokers = get_amount_of_jokers(hand)
+    card_count_list = list(card_count.values())
+    card_count_list.sort()
 
-    return pair_count == 2
+    if card_count_list[-1] + jokers >= 2:
+        rem_jokers = card_count_list[-1] + jokers - 2
+        if len(card_count_list) >= 2 and card_count_list[-2] + rem_jokers >= 2 or \
+            rem_jokers >= 2:
+            return True
 
 
 def is_one_pair(hand: str) -> bool:
@@ -104,10 +132,14 @@ def is_one_pair(hand: str) -> bool:
     for card in hand:
         card_count[card] = card_count.get(card, 0) + 1
 
-    # Check if one card occurs twice
-    for count in card_count.values():
-        if count == 2:
-            return True
+    jokers = get_amount_of_jokers(hand)
+    card_count_list = list(card_count.values())
+    card_count_list.sort()
+
+    # Check if one card occurs twice (pair) or with the help of jokers
+    if card_count_list[-1] + jokers >= 2 or (jokers >= 2 and len(set(card_count_list)) > 2):
+        return True
+    return False
 
 
 # Group cards into collections
@@ -119,7 +151,7 @@ def group_cards():
 
         elif is_four_of_a_kind(hand[0]):
             card_kinds[5].append(hand)
-        
+
         elif is_full_house(hand[0]):
             card_kinds[4].append(hand)
 
@@ -165,7 +197,6 @@ def is_stronger_hand(h1: list, h2: list) -> bool:
         "A": 14,
         "K": 13,
         "Q": 12,
-        "J": 11,
         "T": 10,
         "9": 9,
         "8": 8,
@@ -175,11 +206,13 @@ def is_stronger_hand(h1: list, h2: list) -> bool:
         "4": 4,
         "3": 3,
         "2": 2,
+        "J": 1
     }
 
     for i in range(len(h1)):
         card_value_h1 = cards_and_values[h1[i]]
         card_value_h2 = cards_and_values[h2[i]]
+        
         if card_value_h1 > card_value_h2:
             return True 
         elif card_value_h1 < card_value_h2:
@@ -211,4 +244,5 @@ def calculate_score() -> int:
 read_input()
 group_cards()
 fill_ordered_cards()
+print(card_kinds[1])
 print(calculate_score())
