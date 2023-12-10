@@ -4,11 +4,13 @@ hands = []
 
 # Card data containers
 card_kinds = [
+    [],         # High card
     [],         # One pair
     [],         # Two pairs
     [],         # Three of a kind
+    [],         # Full house
     [],         # Four of a kind
-    []          # Full house
+    [],         # Five of a kind
 ]
 
 ordered_cards = []
@@ -26,7 +28,32 @@ def read_input() -> None:
 
 
 def is_full_house(hand: str) -> bool:
-    get_different_cards(hand) == 1
+    card_count = {}
+
+    # Count the occurrences of each card
+    for card in hand:
+        card_count[card] = card_count.get(card, 0) + 1
+
+    # Check if one card occurs four times
+    if set(card_count.values()).__contains__(3) and \
+        set(card_count.values()).__contains__(2):
+        return True
+    
+    return False
+
+
+def is_five_of_a_kind(hand: str) -> bool:
+    card_count = {}
+
+    # Count the occurrences of each card
+    for card in hand:
+        card_count[card] = card_count.get(card, 0) + 1
+
+    # Check if one card occurs three times and no other card occurs twice
+    if set(card_count.values()).__contains__(5):
+        return True 
+    
+    return False
 
 
 def is_four_of_a_kind(hand: str) -> bool:
@@ -84,9 +111,19 @@ def is_one_pair(hand: str) -> bool:
             return True
 
 
-# Get the number of different cards in a hand
-def get_different_cards(hand: str) -> int:
-    return len(set([*hand[0]]))
+def is_high_card(hand: str) -> bool:
+    card_count = {}
+
+    # Count the occurrences of each card
+    for card in hand:
+        card_count[card] = card_count.get(card, 0) + 1
+
+    # Check if one card occurs twice
+    for v in card_count.values():
+        if v != 1:
+            return False 
+        
+    return True
 
 
 # Group cards into collections
@@ -95,18 +132,51 @@ def group_cards():
     for hand in hands:
         if is_full_house(hand[0]):
             card_kinds[4].append(hand)
+
+        elif is_five_of_a_kind(hand[0]):
+            card_kinds[6].append(hand)
+
         elif is_four_of_a_kind(hand[0]):
-            card_kinds[3].append(hand)
+            card_kinds[5].append(hand)
+
         elif is_three_of_a_kind(hand[0]):
-            card_kinds[2].append(hand)
+            card_kinds[3].append(hand)
+
         elif is_two_pairs(hand[0]):
-            card_kinds[1].append(hand)
+            card_kinds[2].append(hand)
+
         elif is_one_pair(hand[0]):
+            card_kinds[1].append(hand)
+
+        elif is_high_card(hand[0]):
             card_kinds[0].append(hand)
 
 
 # Order hands from the most to the least valuable
 def order_hands(hands: list) -> list:
+    n = len(hands)
+
+    # Use 'Insertion Sort met de Deur' technique
+    if n <= 1:
+        print(hands)
+        return hands
+    
+    for i in range(1, n):
+        sel_hand = hands[i]
+        j = i - 1
+        
+        while j >= 0 and is_stronger_hand(sel_hand[0], hands[j][0]):
+            hands[j + 1] = hands[j]
+            j -= 1
+        
+        hands[j + 1] = sel_hand
+
+    hands.reverse()
+    return hands
+
+
+# Returns whether the first hand is stronger than the second hand.
+def is_stronger_hand(h1: list, h2: list) -> bool:
     cards_and_values = {
         "A": 14,
         "K": 13,
@@ -123,16 +193,22 @@ def order_hands(hands: list) -> list:
         "2": 2,
     }
 
-    # TODO: order hands by card values
-    
-    return hands
+    for i in range(len(h1)):
+        card_value_h1 = cards_and_values[h1[i]]
+        card_value_h2 = cards_and_values[h2[i]]
+        if card_value_h1 > card_value_h2:
+            return True 
+        elif card_value_h1 < card_value_h2:
+            return False
+        
+    return False
 
 
 # Fill ordered_cards with the ordered hands
 def fill_ordered_cards() -> None:
     global ordered_cards
-    for i in range(5):
-        ordered_cards += order_hands(card_kinds[i])
+    for i, _ in enumerate(card_kinds):
+        ordered_cards.extend(order_hands(card_kinds[i]))
 
 
 # Calculate the score of all hands
