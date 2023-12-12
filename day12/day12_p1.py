@@ -29,16 +29,19 @@ def get_group_setup_in_hot_spring(hot_spring: str) -> list:
     return groups_setup
 
 
-def produce_group_combinations(hot_spring: str, satisf_group_setup: str) -> list:
+def produce_group_combinations(hot_spring: str, satisf_group_setup: str, start_index=0) -> list:
     combinations = []
 
-    for i, elem in enumerate(hot_spring):
-        if elem == "?":
+    # TODO: make faster
+
+    for i in range(start_index, len(hot_spring), 1):
+        if hot_spring[i] == "?":
             h = list(hot_spring)
             for j in ['.', '#']:
                 h[i] = j
+
                 combinations.append("".join(h))
-                combinations.extend(produce_group_combinations("".join(h), satisf_group_setup))
+                combinations.extend(produce_group_combinations("".join(h), satisf_group_setup, start_index))
 
     combinations = [c for c in combinations if not "?" in c]
     combinations = [c for c in combinations if get_group_setup_in_hot_spring(c) == satisf_group_setup]
