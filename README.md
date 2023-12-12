@@ -1,6 +1,6 @@
 # Advent of Code 2023
 
-Welcome to the repository containing my solutions for the Advent of Code 2023 challenges! This collection is written in C# and aims to provide clear, concise, and efficient solutions to each day's programming puzzle.
+Welcome to the repository containing my solutions for the Advent of Code 2023 challenges! This collection is written in C# and Python and aims to provide clear, concise, and efficient solutions to each day's programming puzzle.
 
 ## Table of Contents
 
