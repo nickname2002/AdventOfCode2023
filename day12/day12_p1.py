@@ -1,7 +1,4 @@
 
-input_file = open("day12/input.txt", "r")
-
-
 def get_group_setup_in_hot_spring(hot_spring: str) -> list:
     groups_setup = []
     currently_in_group = False
@@ -32,31 +29,38 @@ def get_group_setup_in_hot_spring(hot_spring: str) -> list:
 def produce_group_combinations(hot_spring: str, satisf_group_setup: str, start_index=0) -> list:
     combinations = []
 
-    # TODO: make faster
-
-    for i in range(start_index, len(hot_spring), 1):
+    for i in range(start_index, len(hot_spring)):
         if hot_spring[i] == "?":
-            h = list(hot_spring)
+
+            # Produce all combinations
             for j in ['.', '#']:
+                h = list(hot_spring)
                 h[i] = j
 
-                combinations.append("".join(h))
-                combinations.extend(produce_group_combinations("".join(h), satisf_group_setup, start_index))
-
-    combinations = [c for c in combinations if not "?" in c]
-    combinations = [c for c in combinations if get_group_setup_in_hot_spring(c) == satisf_group_setup]
-    combinations = list(set(combinations))
+                # Case: hot spring production is complete
+                if "?" not in h:
+                    if get_group_setup_in_hot_spring("".join(h)) == satisf_group_setup:
+                        combinations.append("".join(h))
+                else:
+                    combinations.extend(produce_group_combinations("".join(h), satisf_group_setup, i + 1))
+    
     return combinations
 
 
-for line in input_file:
+input_file = open("day12/input.txt", "r")
+total_sum = 0
+
+for i, line in enumerate(input_file):
+    print("Line: ", i)
 
     # Derive different parts of the input string
     fragments = line.split(" ")
     hot_springs = fragments[0]
     group_setup = [int(elem) for elem in fragments[1].split(",")]
 
-    # TODO: Add stuff
-    print(produce_group_combinations(hot_springs, group_setup))
+    # Produce result to add to sum
+    res = produce_group_combinations(hot_springs, group_setup)
+    total_sum += len(res)
 
+print(total_sum)
 input_file.close()
