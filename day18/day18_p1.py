@@ -3,7 +3,7 @@ dig_plan = [["#"]]
 current_pos: tuple = (0, 0)
 
 
-def dig_right():
+def dig_right() -> None:
     global current_pos, dig_plan
 
     # Add new '.' to all dig_plan rows
@@ -33,7 +33,7 @@ def dig_left():
     current_pos = (current_pos[0] - 1, current_pos[1])
 
 
-def dig_up():
+def dig_up() -> None:
     global current_pos, dig_plan
 
     # Add row when necessary
@@ -48,7 +48,7 @@ def dig_up():
     current_pos = (current_pos[0], current_pos[1] - 1)
 
 
-def dig_down():
+def dig_down() -> None:
     global current_pos, dig_plan
 
     # Add new row when necessary
@@ -62,23 +62,37 @@ def dig_down():
     current_pos = (current_pos[0], current_pos[1] + 1)
 
 
-def visualize_dig_plan():
+def visualize_dig_plan() -> None:
     for row in dig_plan:
         print(row)
     print("======================")
 
 
-def perform_operation(operation, amount: int):
+def perform_operation(operation, amount: int) -> None:
     for i in range(amount):
         operation()
 
 
+# TODO: This function is buggy
 def determine_capacity() -> int:
     global dig_plan
-
     total_area = 0
 
-    # TODO: constantly check for containing another "#", then add +1 from start seeing thing
+    for row in dig_plan:
+        row_sum = 0
+        start_counting = False
+
+        # Check all elems in row
+        while row.__contains__("#"):
+            elem = row.pop(0)
+
+            if elem == "#" and not start_counting:
+                start_counting = True
+
+            if start_counting:
+                row_sum += 1
+
+        total_area += row_sum
 
     return total_area
 
@@ -102,6 +116,5 @@ for line in input_file:
         perform_operation(dig_up, amount)
 
 input_file.close()
-dig_plan = transform_grid(dig_plan)
 visualize_dig_plan()
 print(determine_capacity())
